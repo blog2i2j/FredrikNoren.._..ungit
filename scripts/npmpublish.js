@@ -9,7 +9,10 @@ module.exports = async ({ github, context, core, exec }) => {
   const tag = `v${version}`;
   packageJson.version += `+${hash}`;
   await fs.writeFile('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
-  await fs.writeFile('.npmrc', '//registry.npmjs.org/:_authToken=' + process.env.NPM_TOKEN);
+  await fs.writeFile(
+    '.npmrc',
+    `@fredriknoren:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=${process.env.GITHUB_TOKEN}`
+  );
   core.info(`Publish ${packageJson.version} to npm`);
   try {
     if ((await exec.exec('npm publish')) != 0) {
